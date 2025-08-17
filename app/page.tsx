@@ -19,6 +19,8 @@ import {
   CheckCircle2,
   LogIn,
   UserPlus,
+  Menu,
+  X,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
@@ -53,6 +55,7 @@ export default function LandingPage() {
   const [ackSaved, setAckSaved] = useState<boolean>(false)
   const [creating, setCreating] = useState<boolean>(false)
   const [createdSuccess, setCreatedSuccess] = useState<boolean>(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
 
   const rates = { PHP: 55.2, CAD: 1.35 } as const
   const partnerFeePercent = 0.005 // 0.5%
@@ -123,12 +126,16 @@ export default function LandingPage() {
             <div className="text-xs text-dark-300">Philippines–Canada remittance</div>
           </div>
         </div>
+        
+        {/* Desktop Navigation */}
         <div className="hidden items-center space-x-6 md:flex">
           <a href="#features" className="text-sm text-dark-300 hover:text-white transition-colors">Features</a>
           <a href="#remittance" className="text-sm text-dark-300 hover:text-white transition-colors">Remittance</a>
           <a href="#security" className="text-sm text-dark-300 hover:text-white transition-colors">Security</a>
           <a href="#faq" className="text-sm text-dark-300 hover:text-white transition-colors">FAQ</a>
         </div>
+        
+        {/* Desktop Buttons */}
         <div className="hidden items-center space-x-3 md:flex">
           <a href="#" className="glass rounded-xl px-4 py-2 text-sm font-semibold text-dark-100 hover:text-white transition-colors inline-flex items-center gap-2">
             <LogIn className="h-4 w-4" /> Log in
@@ -142,7 +149,96 @@ export default function LandingPage() {
             Create wallet
           </motion.a>
         </div>
+
+        {/* Mobile Menu Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="glass flex h-10 w-10 items-center justify-center rounded-xl md:hidden"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5 text-white" />
+          ) : (
+            <Menu className="h-5 w-5 text-white" />
+          )}
+        </motion.button>
       </motion.nav>
+
+      {/* Mobile Menu */}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ 
+          opacity: mobileMenuOpen ? 1 : 0,
+          height: mobileMenuOpen ? 'auto' : 0
+        }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="glass-dark relative z-10 mx-auto w-full max-w-7xl overflow-hidden md:hidden"
+      >
+        <div className="px-4 py-6 space-y-4">
+          {/* Mobile Navigation Links */}
+          <div className="space-y-3">
+            <a 
+              href="#features" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm text-dark-200 hover:text-white transition-colors py-2"
+            >
+              Features
+            </a>
+            <a 
+              href="#remittance" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm text-dark-200 hover:text-white transition-colors py-2"
+            >
+              Remittance
+            </a>
+            <a 
+              href="#security" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm text-dark-200 hover:text-white transition-colors py-2"
+            >
+              Security
+            </a>
+            <a 
+              href="#faq" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm text-dark-200 hover:text-white transition-colors py-2"
+            >
+              FAQ
+            </a>
+          </div>
+          
+          {/* Mobile Buttons */}
+          <div className="space-y-3 pt-4 border-t border-white/10">
+            <a 
+              href="#" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="glass block w-full rounded-xl px-4 py-3 text-sm font-semibold text-dark-100 hover:text-white transition-colors text-center"
+            >
+              <LogIn className="h-4 w-4 inline mr-2" /> Log in
+            </a>
+            <a 
+              href="#" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="glass block w-full rounded-xl px-4 py-3 text-sm font-semibold text-dark-100 hover:text-white transition-colors text-center"
+            >
+              <UserPlus className="h-4 w-4 inline mr-2" /> Sign up
+            </a>
+            <motion.a 
+              href="#onboarding" 
+              whileHover={{ scale: 1.02 }} 
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setHeroTab('create')
+                setMobileMenuOpen(false)
+              }}
+              className="btn-primary block w-full rounded-xl px-5 py-3 text-sm font-semibold text-center"
+            >
+              Create wallet
+            </motion.a>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Hero */}
       <header className="relative z-10 mx-auto mt-6 max-w-7xl px-4 pb-12 pt-4 md:px-6 md:pb-20">
