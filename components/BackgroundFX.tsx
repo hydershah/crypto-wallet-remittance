@@ -7,9 +7,10 @@ type Particle = {
   y: number
   vx: number
   vy: number
-  baseRadius: number
-  phase: number
-  pulseSpeed: number
+  radius: number
+  type: 'particle' | 'star'
+  twinkle: number
+  twinkleSpeed: number
 }
 
 export default function BackgroundFX(): JSX.Element {
@@ -32,11 +33,11 @@ export default function BackgroundFX(): JSX.Element {
     let mouseY = -9999
 
     const config = {
-      baseCount: 120,
-      maxVelocity: 0.65,
-      linkDistance: 180,
-      linkAlpha: 0.18,
-      particleAlpha: 0.95,
+      baseCount: 85,
+      maxVelocity: 0.85,
+      linkDistance: 140,
+      linkAlpha: 0.12,
+      particleAlpha: 0.9,
       hueA: 232, // primary-purple/blue
       hueB: 300, // magenta
     }
@@ -53,18 +54,20 @@ export default function BackgroundFX(): JSX.Element {
     }
 
     function initParticles(): void {
-      const count = Math.floor(config.baseCount * (isMobile() ? 0.75 : 1))
+      const count = Math.floor(config.baseCount * (isMobile() ? 0.6 : 1))
       particles = Array.from({ length: count }, () => {
-        const speed = Math.random() * config.maxVelocity + 0.1
+        const speed = Math.random() * config.maxVelocity + 0.15
         const angle = Math.random() * Math.PI * 2
+        const isStar = Math.random() < 0.15 // 15% chance of being a star
         return {
           x: Math.random() * width,
           y: Math.random() * height,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          baseRadius: Math.random() * 1.2 + 1.2,
-          phase: Math.random() * Math.PI * 2,
-          pulseSpeed: 0.002 + Math.random() * 0.004,
+          radius: isStar ? Math.random() * 2.5 + 1.5 : Math.random() * 1.8 + 0.8,
+          type: isStar ? 'star' : 'particle',
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: 0.02 + Math.random() * 0.03,
         }
       })
     }
@@ -74,26 +77,22 @@ export default function BackgroundFX(): JSX.Element {
 
       // Gradient background veil (very subtle)
       const g = ctx.createLinearGradient(0, 0, width, height)
-      g.addColorStop(0, 'rgba(102, 126, 234, 0.10)')
-      g.addColorStop(1, 'rgba(240, 147, 251, 0.08)')
+      g.addColorStop(0, 'rgba(102, 126, 234, 0.08)')
+      g.addColorStop(1, 'rgba(240, 147, 251, 0.06)')
       ctx.fillStyle = g
       ctx.fillRect(0, 0, width, height)
-
-      ctx.globalCompositeOperation = 'lighter'
 
       // Update & draw particles
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
 
-        // Stronger mouse attraction
-        const dx = mouseX - p.x
-        const dy = mouseY - p.y
+        // Moderate mouse attraction
+        const dx = p.x - mouseX
+        const dy = p.y - mouseY
         const dist2 = dx * dx + dy * dy
-        const attractRadius2 = 80000
-        if (dist2 < attractRadius2) {
-          const m = 1 - dist2 / attractRadius2
-          p.vx += dx * 0.00035 * m
-          p.vy += dy * 0.00035 * m
+        if (dist2 < 20000) {
+          p.vx += (dx / 20000) * -0.8
+          p.vy += (dy / 20000) * -0.8
         }
 
         p.x += p.vx
@@ -105,30 +104,46 @@ export default function BackgroundFX(): JSX.Element {
         if (p.y < -20) p.y = height + 20
         if (p.y > height + 20) p.y = -20
 
-        // Slight velocity damping
-        p.vx *= 0.995
-        p.vy *= 0.995
+        // Minimal velocity damping
+        p.vx *= 0.998
+        p.vy *= 0.998
 
-        // Pulse
-        p.phase += p.pulseSpeed
-        const r = p.baseRadius * (1 + 0.25 * Math.sin(p.phase))
+        // Update twinkle for stars
+        if (p.type === 'star') {
+          p.twinkle += p.twinkleSpeed
+        }
 
         // Glow circle
         ctx.beginPath()
         const hue = config.hueA + ((config.hueB - config.hueA) * (p.x / Math.max(width, 1)))
-        ctx.fillStyle = `hsla(${hue}, 85%, 65%, ${config.particleAlpha})`
-        ctx.shadowColor = `hsla(${hue}, 85%, 65%, 0.45)`
-        ctx.shadowBlur = 16
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
+        
+        if (p.type === 'star') {
+          // Stars have twinkling effect
+          const twinkleAlpha = 0.7 + 0.3 * Math.sin(p.twinkle)
+          ctx.fillStyle = `hsla(${hue}, 85%, 75%, ${twinkleAlpha})`
+          ctx.shadowColor = `hsla(${hue}, 85%, 75%, 0.5)`
+          ctx.shadowBlur = 20
+        } else {
+          // Regular particles
+          ctx.fillStyle = `hsla(${hue}, 85%, 65%, ${config.particleAlpha})`
+          ctx.shadowColor = `hsla(${hue}, 85%, 65%, 0.4)`
+          ctx.shadowBlur = 14
+        }
+        
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
         ctx.fill()
         ctx.shadowBlur = 0
       }
 
-      // Draw links
+      // Draw links (only between regular particles, not stars)
       for (let i = 0; i < particles.length; i++) {
         const a = particles[i]
+        if (a.type === 'star') continue // Skip stars for links
+        
         for (let j = i + 1; j < particles.length; j++) {
           const b = particles[j]
+          if (b.type === 'star') continue // Skip stars for links
+          
           const dx = a.x - b.x
           const dy = a.y - b.y
           const dist = Math.hypot(dx, dy)
@@ -136,7 +151,7 @@ export default function BackgroundFX(): JSX.Element {
             const t = (a.x + b.x) / (2 * Math.max(width, 1))
             const hue = config.hueA + (config.hueB - config.hueA) * t
             ctx.strokeStyle = `hsla(${hue}, 85%, 65%, ${config.linkAlpha * (1 - dist / config.linkDistance)})`
-            ctx.lineWidth = 1.2
+            ctx.lineWidth = 1.1
             ctx.beginPath()
             ctx.moveTo(a.x, a.y)
             ctx.lineTo(b.x, b.y)
@@ -144,8 +159,6 @@ export default function BackgroundFX(): JSX.Element {
           }
         }
       }
-
-      ctx.globalCompositeOperation = 'source-over'
 
       animationRef.current = requestAnimationFrame(step)
     }
@@ -178,7 +191,7 @@ export default function BackgroundFX(): JSX.Element {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none absolute inset-0 h-full w-full opacity-90 mix-blend-screen"
+      className="pointer-events-none absolute inset-0 h-full w-full opacity-85 mix-blend-screen"
       aria-hidden="true"
     />
   )
