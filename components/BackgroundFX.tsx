@@ -45,7 +45,7 @@ export default function BackgroundFX(): JSX.Element {
     const isMobile = () => window.matchMedia('(max-width: 768px)').matches
 
     function resizeCanvas(): void {
-      if (!canvas) return
+      if (!canvas || !ctx) return
       width = canvas.clientWidth
       height = canvas.clientHeight
       canvas.width = Math.floor(width * dpr)
@@ -74,7 +74,7 @@ export default function BackgroundFX(): JSX.Element {
     }
 
     function step(): void {
-      if (!canvas) return
+      if (!canvas || !ctx) return
       ctx.clearRect(0, 0, width, height)
 
       // Gradient background veil (very subtle)
