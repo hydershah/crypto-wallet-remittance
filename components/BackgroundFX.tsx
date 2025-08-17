@@ -45,6 +45,7 @@ export default function BackgroundFX(): JSX.Element {
     const isMobile = () => window.matchMedia('(max-width: 768px)').matches
 
     function resizeCanvas(): void {
+      if (!canvas) return
       width = canvas.clientWidth
       height = canvas.clientHeight
       canvas.width = Math.floor(width * dpr)
@@ -73,6 +74,7 @@ export default function BackgroundFX(): JSX.Element {
     }
 
     function step(): void {
+      if (!canvas) return
       ctx.clearRect(0, 0, width, height)
 
       // Gradient background veil (very subtle)
@@ -164,6 +166,7 @@ export default function BackgroundFX(): JSX.Element {
     }
 
     function onMouseMove(e: MouseEvent): void {
+      if (!canvas) return
       const rect = canvas.getBoundingClientRect()
       mouseX = e.clientX - rect.left
       mouseY = e.clientY - rect.top
