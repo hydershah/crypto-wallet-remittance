@@ -9,7 +9,6 @@ import {
   Zap,
   Wallet as WalletIcon,
   Coins,
-  Lock,
   Send,
   Download,
   TrendingUp,
@@ -18,7 +17,12 @@ import {
   EyeOff,
   Copy,
   CheckCircle2,
+  LogIn,
+  UserPlus,
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const BackgroundFX = dynamic(() => import('../components/BackgroundFX'), { ssr: false })
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -95,11 +99,12 @@ export default function LandingPage() {
   }
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 text-white">
+      <BackgroundFX />
       {/* Background Orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-gradient-to-br from-primary-500/25 to-secondary-500/25 blur-3xl animate-float" />
-        <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-gradient-to-br from-accent-500/25 to-primary-500/25 blur-3xl animate-float" style={{ animationDelay: '1.2s' }} />
-        <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-secondary-500/10 to-accent-500/10 blur-3xl animate-pulse-slow" />
+        <div className="absolute -top-40 -right-40 hidden h-96 w-96 rounded-full bg-gradient-to-br from-primary-500/25 to-secondary-500/25 blur-3xl animate-float md:block" />
+        <div className="absolute -bottom-40 -left-40 hidden h-96 w-96 rounded-full bg-gradient-to-br from-accent-500/25 to-primary-500/25 blur-3xl animate-float md:block" style={{ animationDelay: '1.2s' }} />
+        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-secondary-500/10 to-accent-500/10 blur-3xl opacity-70 animate-pulse-slow md:h-80 md:w-80" />
       </div>
 
       {/* Navbar */}
@@ -107,7 +112,7 @@ export default function LandingPage() {
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-5"
+        className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-5 md:px-6"
       >
         <div className="flex items-center space-x-3">
           <div className="glow flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500">
@@ -124,15 +129,23 @@ export default function LandingPage() {
           <a href="#security" className="text-sm text-dark-300 hover:text-white transition-colors">Security</a>
           <a href="#faq" className="text-sm text-dark-300 hover:text-white transition-colors">FAQ</a>
         </div>
-        <motion.a href="#onboarding" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
-          onClick={() => setHeroTab('create')}
-          className="btn-primary rounded-xl px-5 py-2 text-sm font-semibold">
-          Create Wallet
-        </motion.a>
+        <div className="hidden items-center space-x-3 md:flex">
+          <a href="#" className="glass rounded-xl px-4 py-2 text-sm font-semibold text-dark-100 hover:text-white transition-colors inline-flex items-center gap-2">
+            <LogIn className="h-4 w-4" /> Log in
+          </a>
+          <a href="#" className="glass rounded-xl px-4 py-2 text-sm font-semibold text-dark-100 hover:text-white transition-colors inline-flex items-center gap-2">
+            <UserPlus className="h-4 w-4" /> Sign up
+          </a>
+          <motion.a href="#onboarding" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
+            onClick={() => setHeroTab('create')}
+            className="btn-primary rounded-xl px-5 py-2 text-sm font-semibold">
+            Create wallet
+          </motion.a>
+        </div>
       </motion.nav>
 
       {/* Hero */}
-      <header className="relative z-10 mx-auto mt-6 max-w-7xl px-6 pb-12 pt-4 md:pb-20">
+      <header className="relative z-10 mx-auto mt-6 max-w-7xl px-4 pb-12 pt-4 md:px-6 md:pb-20">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mb-3 inline-flex items-center space-x-2 rounded-full bg-white/5 px-3 py-1 text-xs text-dark-200 ring-1 ring-white/10">
@@ -140,7 +153,7 @@ export default function LandingPage() {
               <span>Non‑custodial wallet • Web3‑native • USDC‑first</span>
             </motion.div>
 
-            <motion.h1 variants={fadeUp} custom={1} initial="hidden" animate="visible" className="mb-4 text-4xl font-extrabold leading-tight md:text-6xl">
+            <motion.h1 variants={fadeUp} custom={1} initial="hidden" animate="visible" className="mb-4 text-3xl font-extrabold leading-tight sm:text-4xl md:text-6xl">
               <span className="gradient-text">The Web3 wallet</span> for Philippines–Canada transfers
             </motion.h1>
 
@@ -169,8 +182,8 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div variants={fadeUp} custom={4} initial="hidden" animate="visible" className="mt-8 flex items-center gap-6 text-xs text-dark-300">
-              <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-success" /> AES‑256 local encryption</div>
-              <div className="hidden items-center gap-2 md:flex"><Lock className="h-4 w-4 text-primary-400" /> Biometric ready (WebAuthn)</div>
+              <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-success" /> End‑to‑end encryption (AES‑256)</div>
+              <div className="hidden items-center gap-2 md:flex"><CheckCircle2 className="h-4 w-4 text-primary-400" /> KYC/AML ready</div>
             </motion.div>
           </div>
 
@@ -181,7 +194,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div id="onboarding" className="glow shimmer relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-dark-900/60 to-dark-800/60 p-6 shadow-2xl backdrop-blur-md">
+            <div id="onboarding" className="glow shimmer relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-dark-900/60 to-dark-800/60 p-5 shadow-2xl backdrop-blur-md md:p-6">
               {/* Segmented control */}
               <div className="mb-4 flex rounded-xl bg-dark-900/60 p-1 ring-1 ring-white/10">
                 {(['transfer','create'] as const).map((tab) => (
@@ -190,7 +203,7 @@ export default function LandingPage() {
                       setHeroTab(tab)
                       if (tab === 'create' && seed.length === 0) generateSeed()
                     }}
-                    className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                    className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-all will-change-transform ${
                       heroTab === tab ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white' : 'text-dark-300 hover:text-white'
                     }`}
                   >
@@ -365,7 +378,7 @@ export default function LandingPage() {
                         {creating ? 'Creating…' : 'Create Wallet'}
                       </motion.button>
                       <motion.button whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="glass flex-1 rounded-xl px-5 py-3 text-sm font-semibold text-dark-100 hover:text-white">
-                        Set up biometrics
+                        Complete KYC
                       </motion.button>
                     </div>
 
@@ -388,7 +401,7 @@ export default function LandingPage() {
       </header>
 
       {/* Partners */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-10">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="mb-6 text-center text-xs uppercase tracking-wider text-dark-400">Trusted integrations</div>
         <div className="mx-auto grid max-w-4xl grid-cols-2 items-center gap-6 opacity-70 md:grid-cols-4">
           {['Ethereum', 'Polygon', 'Solana', 'WalletConnect'].map((n, i) => (
@@ -400,16 +413,16 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="relative z-10 mx-auto max-w-7xl px-6 py-16">
-        <motion.h2 initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 text-center text-3xl font-extrabold">Ultra‑Modern Web3, Thoughtful UX</motion.h2>
+      <section id="features" className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6">
+        <motion.h2 initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 text-center text-3xl font-extrabold">Built for reliability, security and clarity</motion.h2>
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            { icon: <Shield className="h-5 w-5" />, title: 'Non‑Custodial by Design', desc: 'Your keys, your coins. Seed phrase backup, encrypted locally.' },
-            { icon: <Zap className="h-5 w-5" />, title: 'Fast & Affordable', desc: 'USDC on Ethereum and Polygon for lower fees and speed.' },
+            { icon: <Shield className="h-5 w-5" />, title: 'Non‑custodial by design', desc: 'Your keys, your coins. End‑to‑end encryption and secure on‑device key management.' },
+            { icon: <Zap className="h-5 w-5" />, title: 'Fast & affordable', desc: 'USDC on Ethereum and Polygon for lower fees and speed.' },
             { icon: <Globe className="h-5 w-5" />, title: 'Philippines–Canada remittance', desc: 'Send USDC and settle to PHP or CAD via trusted partners.' },
-            { icon: <TrendingUp className="h-5 w-5" />, title: 'Clean Insights', desc: 'Beautiful analytics and clear transaction history.' },
-            { icon: <Lock className="h-5 w-5" />, title: 'Biometric Ready', desc: 'WebAuthn and hardware wallet integrations planned.' },
-            { icon: <WalletIcon className="h-5 w-5" />, title: 'Simple Wallet UX', desc: 'Create, import, send, receive — without the clutter.' },
+            { icon: <TrendingUp className="h-5 w-5" />, title: 'Clear insights', desc: 'Transparent history, statuses and portfolio analytics.' },
+            { icon: <CheckCircle2 className="h-5 w-5" />, title: 'KYC/AML ready', desc: 'Compliance workflows with provider integrations when required.' },
+            { icon: <WalletIcon className="h-5 w-5" />, title: 'Simple wallet UX', desc: 'Create, import, send and receive without the clutter.' },
           ].map((f, i) => (
             <motion.div
               key={i}
@@ -430,11 +443,11 @@ export default function LandingPage() {
       </section>
 
       {/* Remittance Highlight */}
-      <section id="remittance" className="relative z-10 mx-auto max-w-7xl px-6 py-16">
+      <section id="remittance" className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6">
         <div className="grid items-center gap-8 md:grid-cols-2">
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <div className="mb-3 inline-flex rounded-full bg-white/5 px-3 py-1 text-xs ring-1 ring-white/10">Remittance v2</div>
-            <h3 className="mb-3 text-3xl font-extrabold">PH ↔️ Canada Transfers</h3>
+            <h3 className="mb-3 text-3xl font-extrabold">Philippines–Canada transfers</h3>
             <p className="mb-6 max-w-xl text-dark-200">Send USDC and receive PHP or CAD in 3–5 business days. Limits up to $8,000 CAD. Managed via partners to launch fast.</p>
             <ul className="mb-6 space-y-2 text-sm text-dark-200">
               <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-primary-400" /> Manual processing, transparent status</li>
@@ -472,21 +485,21 @@ export default function LandingPage() {
       </section>
 
       {/* Security */}
-      <section id="security" className="relative z-10 mx-auto max-w-7xl px-6 py-16">
+      <section id="security" className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6">
         <div className="rounded-3xl bg-gradient-to-r from-primary-500/10 via-secondary-500/10 to-accent-500/10 p-8 ring-1 ring-white/10">
           <div className="grid items-center gap-6 md:grid-cols-2">
             <div>
-              <h3 className="mb-2 text-2xl font-extrabold">Security, by default</h3>
-              <p className="mb-4 text-dark-200">Keys never leave your device. We use modern Web Crypto, AES‑256 local encryption, and plan biometric authentication.</p>
+              <h3 className="mb-2 text-2xl font-extrabold">Security and compliance</h3>
+              <p className="mb-4 text-dark-200">Keys never leave your device. End‑to‑end encryption with AES‑256, secure key management, and KYC/AML workflows when required.</p>
               <div className="flex flex-wrap gap-3 text-xs text-dark-200">
                 <div className="glass rounded-full px-3 py-1">AES‑256</div>
                 <div className="glass rounded-full px-3 py-1">BIP39 • BIP44</div>
-                <div className="glass rounded-full px-3 py-1">WebAuthn</div>
-                <div className="glass rounded-full px-3 py-1">Hardware Wallets</div>
+                <div className="glass rounded-full px-3 py-1">KYC/AML ready</div>
+                <div className="glass rounded-full px-3 py-1">Hardware wallets</div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {[{ t: 'Local Encryption', i: Shield }, { t: 'Biometric Ready', i: Lock }, { t: 'Multi‑Chain', i: Globe }, { t: 'Trusted Partners', i: Zap }].map((s, i) => (
+              {[{ t: 'End‑to‑end encryption', i: Shield }, { t: 'KYC/AML', i: CheckCircle2 }, { t: 'Multi‑chain support', i: Globe }, { t: 'Licensed partners', i: Zap }].map((s, i) => (
                 <div key={i} className="card-hover flex items-center gap-3 rounded-xl bg-dark-900/60 p-4 ring-1 ring-white/10">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500">
                     <s.i className="h-5 w-5" />
@@ -500,7 +513,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 pb-20">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 pb-20 md:px-6">
         <div className="glow overflow-hidden rounded-3xl bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-accent-500/20 p-[1px]">
           <div className="rounded-3xl bg-dark-950/70 p-8">
             <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
